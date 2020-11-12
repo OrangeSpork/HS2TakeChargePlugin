@@ -51,6 +51,10 @@
       <HintPath>..\packages\IllusionLibs.BepInEx.Harmony.2.0.6\lib\net35\BepInEx.Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="DOTween">
+      <HintPath>..\..\..\..\illusion\hs2dx\HoneySelect2_Data\Managed\DOTween.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="IL, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IllusionLibs.HoneySelect2.IL.2020.5.29\lib\net46\IL.dll</HintPath>
       <Private>False</Private>
@@ -67,6 +71,10 @@
       <HintPath>..\packages\IllusionLibs.HoneySelect2.UnityEngine.CoreModule.2018.4.11\lib\net46\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IllusionLibs.HoneySelect2.UnityEngine.AnimationModule.2018.4.11\lib\net46\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IllusionLibs.HoneySelect2.UnityEngine.CoreModule.2018.4.11\lib\net46\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
@@ -81,8 +89,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hooks.cs" />
+    <Compile Include="AnimationStatus.cs" />
+    <Compile Include="Hooks\AibuHooks.cs" />
+    <Compile Include="Hooks\GeneralHooks.cs" />
+    <Compile Include="Hooks\HoushiHooks.cs" />
+    <Compile Include="Hooks\LesHooks.cs" />
+    <Compile Include="Hooks\MasturbationHooks.cs" />
+    <Compile Include="Hooks\MultiplayF1M2Hooks.cs" />
+    <Compile Include="Hooks\MultiplayF2M1Hooks.cs" />
+    <Compile Include="Hooks\PeepingHooks.cs" />
+    <Compile Include="Hooks\SonyuHooks.cs" />
+    <Compile Include="Hooks\SpnkingHooks.cs" />
     <Compile Include="HS2TakeChargePlugin.cs" />
+    <Compile Include="TCRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
