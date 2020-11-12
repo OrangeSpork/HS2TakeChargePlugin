@@ -60,3 +60,5 @@ SpeedEase - this is the transition pattern between min and max speeds. Available
 LoopType - Pick Yoyo. Unless you know what you are doing.\
 Min/Max FemaleOffset - This causes the female animation to become asynchronous to the male animation by these values in seconds. Recommend very small numbers, values over .25 seconds result in...odd animations.\
 FemaleOffsetEase - Pattern of offset transitions, same as SpeedEase.
+
+The config file is reloaded whenever Auto mode is engaged, so you can load an edit by just tapping CTRL-A (or whatever hotkey) twice. The animation speed changes require a loop change, so change positions or swap between slow->fast or any other loop change to trigger the new settings. New inclusions/exclusion take effect on the next animation selection event.
