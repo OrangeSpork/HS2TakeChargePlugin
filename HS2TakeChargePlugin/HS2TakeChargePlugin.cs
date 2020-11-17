@@ -33,13 +33,16 @@ namespace HS2TakeChargePlugin
     {
         public const string GUID = "orange.spork.hs2takechargeplugin";
         public const string PluginName = "HS2TakeChargePlugin";
-        public const string Version = "1.2.0";
+        public const string Version = "1.3.0";
 
         public static ConfigEntry<KeyboardShortcut> TakeChargeKey { get; set; }
         public static ConfigEntry<KeyboardShortcut> AutoKey { get; set; }
 
         public static ConfigEntry<KeyboardShortcut> StopMale { get; set; }
         public static ConfigEntry<KeyboardShortcut> StopFemale { get; set; }
+
+        public static ConfigEntry<bool> ResetToIdleOnChange { get; set; }
+        public static ConfigEntry<bool> ResetArousalOnChange { get; set; }
 
         public static ConfigEntry<bool> AllowAllPositions { get; set; }
 
@@ -86,6 +89,9 @@ namespace HS2TakeChargePlugin
 
             StopMale = Config.Bind("Hotkeys", "Stop Male Arousal", new KeyboardShortcut(KeyCode.None));
             StopFemale = Config.Bind("Hotkeys", "Stop Female Arousal", new KeyboardShortcut(KeyCode.None));
+
+            ResetToIdleOnChange = Config.Bind("Options", "Reset to Idle on Pos Change", false, new ConfigDescription("Reset to Idle loop animation when changing positions"));
+            ResetArousalOnChange = Config.Bind("Options", "Reset Arousal Meters on Pos Change", false, new ConfigDescription("Reset arousal gauge when changing positions"));
 
             AllowAllPositions = Config.Bind("Options", "Auto Mode - Ignore Location Animation Limits", false, new ConfigDescription("Some Animations Won't Fit the Location..."));
 

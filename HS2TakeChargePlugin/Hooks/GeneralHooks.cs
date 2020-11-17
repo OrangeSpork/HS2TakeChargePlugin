@@ -81,6 +81,26 @@ namespace HS2TakeChargePlugin
                 __result = HS2TakeChargePlugin.Instance.RandomSelectAnimation(_listAnim);
             }
         }
+
+        [HarmonyPrefix, HarmonyPatch(typeof(HScene), "IsIdle")]
+        static bool HsceneIsIdleAdditions(Animator _anim, HScene __instance, ref bool __result)
+        {
+            if (HS2TakeChargePlugin.ResetArousalOnChange.Value)
+            {
+                Singleton<HSceneFlagCtrl>.Instance.feel_m = 0f;
+                Singleton<HSceneFlagCtrl>.Instance.feel_f = 0f;
+            }
+
+            if (HS2TakeChargePlugin.ResetToIdleOnChange.Value)
+            {
+                __result = true;
+                return false;
+            }            
+            else
+            {
+               return true;
+            }
+        }
         
        
     }
