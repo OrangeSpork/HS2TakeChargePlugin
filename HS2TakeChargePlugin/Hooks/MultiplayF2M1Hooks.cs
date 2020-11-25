@@ -21,36 +21,60 @@ namespace HS2TakeChargePlugin.Hooks
         private static FieldInfo chaFemalesFieldInfo = AccessTools.Field(typeof(MultiPlay_F2M1), "chaFemales");
         private static FieldInfo chaMalesFieldInfo = AccessTools.Field(typeof(MultiPlay_F2M1), "chaMales");
         private static FieldInfo itemFieldInfo = AccessTools.Field(typeof(MultiPlay_F2M1), "item");
+        private static FieldInfo animParType = AccessTools.Field(typeof(MultiPlay_F2M1), "animPar");
+        private static FieldInfo speedField = AccessTools.Field(animParType.FieldType, "speed");
         [HarmonyPostfix, HarmonyPatch(typeof(MultiPlay_F2M1), "setAnimationParamater")]
         static void MultiPlay_F2M1SpeedGambit(MultiPlay_F2M1 __instance)
         {
-            if (!HS2TakeChargePlugin.Instance.AnimationOverrideActive())
+            if (!HS2TakeChargePlugin.Instance.AnimationOverrideActive() && HS2TakeChargePlugin.Instance.ManualSpeedAdder == 0f)
             {
                 return;
             }
 
             ChaControl[] chaFemales = (ChaControl[])chaFemalesFieldInfo.GetValue(__instance);
             ChaControl[] chaMales = (ChaControl[])chaMalesFieldInfo.GetValue(__instance);
-            HItemCtrl item = (HItemCtrl)itemFieldInfo.GetValue(__instance);          
+            HItemCtrl item = (HItemCtrl)itemFieldInfo.GetValue(__instance);
 
-            for (int j = 0; j < chaFemales.Length; j++)
+            if (HS2TakeChargePlugin.Instance.AnimationOverrideActive())
             {
-                if (chaFemales[j].visibleAll && !(chaFemales[j].objTop == null))
+                for (int j = 0; j < chaFemales.Length; j++)
                 {
-                    chaFemales[j].setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
-                    if (AnimationStatus.FemaleOffset != 0)
-                        chaFemales[j].animBody.Play(AnimationStatus.PlayingAnimation, 0, (chaMales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime + AnimationStatus.FemaleOffset));
+                    if (chaFemales[j].visibleAll && !(chaFemales[j].objTop == null))
+                    {
+                        chaFemales[j].setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
+                        if (AnimationStatus.FemaleOffset != 0)
+                            chaFemales[j].animBody.Play(AnimationStatus.PlayingAnimation, 0, (chaMales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime + AnimationStatus.FemaleOffset));
+                    }
+                }
+                if (chaMales[0].objBodyBone != null)
+                {
+                    chaMales[0].setAnimatorParamFloat("speed", AnimationStatus.MaleSpeed);
+                }
+                if (item.GetItem() != null)
+                {
+                    item.setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
                 }
             }
-            if (chaMales[0].objBodyBone != null)
+            else
             {
-                chaMales[0].setAnimatorParamFloat("speed", AnimationStatus.MaleSpeed);
+                float originalSpeed = (float)speedField.GetValue(animParType.GetValue(__instance));
+                for (int j = 0; j < chaFemales.Length; j++)
+                {
+                    if (chaFemales[j].visibleAll && !(chaFemales[j].objTop == null))
+                    {
+                        chaFemales[j].setAnimatorParamFloat("speed", originalSpeed + HS2TakeChargePlugin.Instance.ManualSpeedAdder);
+                    }
+                }
+                if (chaMales[0].objBodyBone != null)
+                {
+                    chaMales[0].setAnimatorParamFloat("speed", originalSpeed + HS2TakeChargePlugin.Instance.ManualSpeedAdder);
+                }
+                if (item.GetItem() != null)
+                {
+                    item.setAnimatorParamFloat("speed", originalSpeed + HS2TakeChargePlugin.Instance.ManualSpeedAdder);
+                }
             }
-            if (item.GetItem() != null)
-            {
-                item.setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
-            }
-    //        HS2TakeChargePlugin.Instance.Log.LogInfo(string.Format("Status: {0} {1} Female Sp: {2} Time: {3} Male Time: {4}", AnimationStatus.AnimSequence.IsPlaying(), AnimationStatus.PlayingAnimation, AnimationStatus.FemaleSpeed, chaFemales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime, chaMales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime));
+    
         }
 
         [HarmonyPrefix, HarmonyPatch(typeof(MultiPlay_F2M1), "setPlay")]

@@ -33,13 +33,18 @@ namespace HS2TakeChargePlugin
     {
         public const string GUID = "orange.spork.hs2takechargeplugin";
         public const string PluginName = "HS2TakeChargePlugin";
-        public const string Version = "1.3.0";
+        public const string Version = "1.4.0";
 
         public static ConfigEntry<KeyboardShortcut> TakeChargeKey { get; set; }
         public static ConfigEntry<KeyboardShortcut> AutoKey { get; set; }
 
         public static ConfigEntry<KeyboardShortcut> StopMale { get; set; }
         public static ConfigEntry<KeyboardShortcut> StopFemale { get; set; }
+
+        public static ConfigEntry<KeyboardShortcut> ManualSpeedIncrease { get; set; }
+        public static ConfigEntry<KeyboardShortcut> ManualSpeedDecrease { get; set; }
+        public static ConfigEntry<KeyboardShortcut> ManualSpeedReset { get; set; }
+        public static ConfigEntry<float> ManualSpeedIncrement { get; set; }
 
         public static ConfigEntry<bool> ResetToIdleOnChange { get; set; }
         public static ConfigEntry<bool> ResetArousalOnChange { get; set; }
@@ -71,6 +76,8 @@ namespace HS2TakeChargePlugin
 
         public TCRuleSet RuleSet { get; set; }
 
+        public float ManualSpeedAdder { get; set; }
+
         public static HS2TakeChargePlugin Instance { get; set; }
 
         internal BepInEx.Logging.ManualLogSource Log => Logger;
@@ -98,6 +105,11 @@ namespace HS2TakeChargePlugin
             EnableSpeedOverride = Config.Bind("Options", "Enable Auto Speed Override", false, new ConfigDescription("Override normal speed control/limits in auto mode"));
             AlwaysEnableSpeedOverride = Config.Bind("Options", "Speed Override All Modes", false, new ConfigDescription("Override normal speed control/limits in all modes"));
             AnimRulesFile = Config.Bind("Options", "Anim Rules File", "UserData/HS2TakeChargeRules.xml", new ConfigDescription("Rules File Location"));
+
+            ManualSpeedIncrease = Config.Bind("Hotkeys", "Manual H-Anim Visual Speed (Increase)", new KeyboardShortcut(KeyCode.None), new ConfigDescription("Note: Controls VISUAL H-Anim speed, stacks with mousewheel speed."));
+            ManualSpeedDecrease = Config.Bind("Hotkeys", "Manual H-Anim Visual Speed (Decrease)", new KeyboardShortcut(KeyCode.None), new ConfigDescription("Note: Controls VISUAL H-Anim speed, stacks with mousewheel speed."));
+            ManualSpeedReset = Config.Bind("Hotkeys", "Manual H-Anim Visual Speed (Reset)", new KeyboardShortcut(KeyCode.None), new ConfigDescription("Note: Controls VISUAL H-Anim speed, stacks with mousewheel speed."));
+            ManualSpeedIncrement = Config.Bind("Options", "Manual H-Anim Visual Speed Increment", 0.1f, new ConfigDescription("How much to increase/decrease visual h-anim speed per hotkey press"));
 
 
             StartWaitMin = Config.Bind("Timings", "Start Wait Min", 3, new ConfigDescription("Minimum Time (Seconds) to Wait at Start of Position [Change Requires Restart]"));
@@ -310,8 +322,35 @@ namespace HS2TakeChargePlugin
             return BaseMap.infoTable.Values.Select(mi => mi.MapNames[0]).ToArray();
         }
 
+        private void LogManualSpeedSetting()
+        {
+            if (ManualSpeedAdder > 0f)
+            {
+                Log.LogMessage(string.Format("H Anim Speed Increased by {0:0.00##}", ManualSpeedAdder));
+            }
+            else if (ManualSpeedAdder < 0f)
+            {
+                Log.LogMessage(string.Format("H Anim Speed Decreased by {0:0.00##}", ManualSpeedAdder));
+            }
+        }
+
         void Update()
         {
+            if (ManualSpeedIncrease.Value.IsDown())
+            {
+                ManualSpeedAdder += ManualSpeedIncrement.Value;
+                LogManualSpeedSetting();
+            }
+            if (ManualSpeedDecrease.Value.IsDown())
+            {
+                ManualSpeedAdder -= ManualSpeedIncrement.Value;
+                LogManualSpeedSetting();
+            }
+            if (ManualSpeedReset.Value.IsUp())
+            {
+                ManualSpeedAdder = 0f;
+                Log.LogMessage("H Anim Speed Reset");
+            }
             if (TakeChargeKey.Value.IsUp())
             {
                 if (Singleton<HSceneFlagCtrl>.Instance.initiative == 2)

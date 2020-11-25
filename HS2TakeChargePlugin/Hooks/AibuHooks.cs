@@ -16,34 +16,56 @@ namespace HS2TakeChargePlugin.Hooks
         private static FieldInfo chaFemalesFieldInfo = AccessTools.Field(typeof(Aibu), "chaFemales");
         private static FieldInfo chaMalesFieldInfo = AccessTools.Field(typeof(Aibu), "chaMales");
         private static FieldInfo itemFieldInfo = AccessTools.Field(typeof(Aibu), "item");
+        private static FieldInfo animParType = AccessTools.Field(typeof(Aibu), "animPar");
+        private static FieldInfo speedField = AccessTools.Field(animParType.FieldType, "speed");
         [HarmonyPostfix, HarmonyPatch(typeof(Aibu), "setAnimationParamater")]
         static void AibuSpeedGambit(Aibu __instance)
-        {
-            if (!HS2TakeChargePlugin.Instance.AnimationOverrideActive())
+        {            
+            if (!HS2TakeChargePlugin.Instance.AnimationOverrideActive() && HS2TakeChargePlugin.Instance.ManualSpeedAdder == 0f)
             {
                 return;
             }
 
             ChaControl[] chaFemales = (ChaControl[])chaFemalesFieldInfo.GetValue(__instance);
             ChaControl[] chaMales = (ChaControl[])chaMalesFieldInfo.GetValue(__instance);
-            HItemCtrl item = (HItemCtrl)itemFieldInfo.GetValue(__instance);       
+            HItemCtrl item = (HItemCtrl)itemFieldInfo.GetValue(__instance);
 
-            if (chaFemales[0].visibleAll && chaFemales[0].objBodyBone != null)
+
+
+            if (HS2TakeChargePlugin.Instance.AnimationOverrideActive())
             {
-                chaFemales[0].setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
-                if (AnimationStatus.FemaleOffset != 0)
-                    chaFemales[0].animBody.Play(AnimationStatus.PlayingAnimation, 0, (chaMales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime + AnimationStatus.FemaleOffset));
+
+                if (chaFemales[0].visibleAll && chaFemales[0].objBodyBone != null)
+                {
+                    chaFemales[0].setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
+                    if (AnimationStatus.FemaleOffset != 0)
+                        chaFemales[0].animBody.Play(AnimationStatus.PlayingAnimation, 0, (chaMales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime + AnimationStatus.FemaleOffset));
+                }
+                if (chaMales[0].objBodyBone != null)
+                {
+                    chaMales[0].setAnimatorParamFloat("speed", AnimationStatus.MaleSpeed);
+                }
+                if (item.GetItem() != null)
+                {
+                    item.setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
+                }
             }
-            if (chaMales[0].objBodyBone != null)
+            else
             {
-                chaMales[0].setAnimatorParamFloat("speed", AnimationStatus.MaleSpeed);
+                float originalSpeed = (float)speedField.GetValue(animParType.GetValue(__instance));
+                if (chaFemales[0].visibleAll && chaFemales[0].objBodyBone != null)
+                {
+                    chaFemales[0].setAnimatorParamFloat("speed", originalSpeed + HS2TakeChargePlugin.Instance.ManualSpeedAdder);
+                }
+                if (chaMales[0].objBodyBone != null)
+                {
+                    chaMales[0].setAnimatorParamFloat("speed", originalSpeed + HS2TakeChargePlugin.Instance.ManualSpeedAdder);
+                }
+                if (item.GetItem() != null)
+                {
+                    item.setAnimatorParamFloat("speed", originalSpeed + HS2TakeChargePlugin.Instance.ManualSpeedAdder);
+                }
             }
-            if (item.GetItem() != null)
-            {
-                item.setAnimatorParamFloat("speed", AnimationStatus.FemaleSpeed);
-            }
-  //          HS2TakeChargePlugin.Instance.Log.LogInfo(string.Format("Anim Speed: {0} -> {1}", beforeSpeed, chaFemales[0].animBody.GetFloat("speed")));
-            //       HS2TakeChargePlugin.Instance.Log.LogInfo(string.Format("Status: {0} {1} Female Sp: {2} Time: {3} Male Time: {4}", AnimationStatus.AnimSequence.IsPlaying(), AnimationStatus.PlayingAnimation, AnimationStatus.FemaleSpeed, chaFemales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime, chaMales[0].animBody.GetCurrentAnimatorStateInfo(0).normalizedTime));
         }
 
         [HarmonyPrefix, HarmonyPatch(typeof(Aibu), "setPlay")]
