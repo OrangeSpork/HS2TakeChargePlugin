@@ -10,7 +10,7 @@ A new girl will have access to few or none of these. If none are available it'll
 \
 This should only really be used with girls with more advanced experience/state. I don't believe slave girls have access to many dominant positions either, but haven't tested it.
 
-The Ctrl+A (default) auto mode engages, well, auto mode - similar to above. Game plays itself essentially until you turn it off or the female exhausts. It will randomly select from all available positions, but is limited to Caress, Service and Sex positions (including the Women led versions). Special, Lesbian and Multichar modes will not be selected and enabling auto mode inside of them doesn't entirely function.
+The Ctrl+A (default) auto mode engages, well, auto mode - similar to above. Game plays itself essentially until you turn it off or the female exhausts. It will randomly select from all available positions.
 
 Auto Animation Timing: When turned on (in plugin settings) overrides the animation speed with a (configurable - see Rules below) timing pattern. Adds a bit of variety to the visuals. Note - this doesn't change the arousal meter speed, just the visuals. If you enable auto speed in all modes, you still have control of the arousal speed and changing between slow/fast loops with the mouse wheel - it just won't change the animation speed.
 
